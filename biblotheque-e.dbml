@@ -1,0 +1,191 @@
+Project "Biblotheque-E" {
+  database_type: 'SQLLite'
+  Note: 'Biblotheque-E Database'
+}
+
+Table user {
+  id uuid [pk, default: `gen_random_uuid()`]
+  first_name varchar(255) [not null]
+  last_name varchar(255) [not null]
+  email varchar(255) [unique, not null]
+  phone varchar(255) [unique, not null]
+  password text
+  is_email_verified boolean [default:false]
+  is_phone_verified boolean [default:false]
+  is_verified boolean [default:false]
+  country text
+  suspension_status enum_suspension_status [default: null]
+  is_deactivated boolean [not null, default:false]
+  incorrect_password_attempt_count int [default: 0]
+  otp text
+  verification_code text
+  reset_password_code text
+  otp_last_generated_at timestamp
+  verification_code_last_generated_at timestamp
+  reset_password_code_last_generated_at timestamp
+  last_login timestamp
+  password_reset_at timestamp
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+  is_deleted boolean [default: false]
+  deleted_at timestamp
+  deactivated_at timestamp
+}
+
+// NOTE: roles are borrower, lender, librarian
+Table role {
+  id uuid [pk, default: `gen_random_uuid()`]
+  name varchar(255) [not null]
+  description text
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+  is_deleted boolean [default: false]
+  deleted_at timestamp
+}
+
+Table permission {
+  id uuid [pk, default: `gen_random_uuid()`]
+  name varchar(255) [not null]
+  description text
+  access varchar(255)
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+  is_deleted boolean [default: false]
+  deleted_at timestamp
+}
+
+Table user_role_association {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid [not null]
+  role_id uuid [not null]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+  is_deleted boolean [default: false]
+  deleted_at timestamp
+}
+Ref: user_role_association.user_id > user.id [delete: cascade, update: cascade]
+Ref: user_role_association.role_id > role.id [delete: cascade, update: cascade]
+
+Table role_permission_association {
+  id uuid [pk, default: `gen_random_uuid()`]
+  role_id uuid [not null]
+  permission_id uuid [not null]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+  is_deleted boolean [default: false]
+  deleted_at timestamp
+}
+Ref: role_permission_association.role_id > role.id [delete: cascade, update: cascade]
+Ref: role_permission_association.permission_id > permission.id [delete: cascade, update: cascade]
+
+Enum enum_suspension_log_action {
+  suspended
+  restored
+}
+Table suspension_log {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid
+  action enum_suspension_log_action [not null]
+  trigger enum_suspension_status [not null]
+  reason text
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+  is_deleted boolean [default: false]
+  deleted_at timestamp
+}
+Ref: suspension_log.user_id > user.id [delete: cascade, update: cascade]
+
+// TODO: add other book details with a dynamic form
+Table book {
+  id uuid [pk, default: `gen_random_uuid()`]
+  proprietor_id uuid [not null]
+  title varchar(255) [not null]
+  author_name varchar(255) [not null]
+  description text
+  total_quantity int [not null, default: 0]
+  public_shelf_quantity int [not null, default: 0]
+  private_shelf_quantity int [not null, default: 0]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+  is_deleted boolean [default: false]
+  deleted_at timestamp
+  deactivated_at timestamp
+}
+Ref: book.proprietor_id > user.id [delete: cascade, update: cascade]
+
+Table genre {
+  id uuid [pk, default: `gen_random_uuid()`]
+  name varchar(255) [not null]
+  description text
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+  is_deleted boolean [default: false]
+  deleted_at timestamp
+}
+
+Table book_genre_association {
+  id uuid [pk, default: `gen_random_uuid()`]
+  book_id uuid [not null]
+  genre_id uuid [not null]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+  is_deleted boolean [default: false]
+  deleted_at timestamp
+}
+Ref: book_genre_association.book_id > book.id [delete: cascade, update: cascade]
+
+Table check_in_out {
+  id uuid [pk, default: `gen_random_uuid()`]
+  book_id uuid [not null]
+  borrower_id uuid [not null]
+  checked_out_at timestamp [not null]
+  due_at timestamp [not null]
+  returned boolean [default: false]
+  returned_at timestamp
+  fine_owed decimal [not null, default: 0]
+  fine_paid decimal [not null, default: 0]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+  is_deleted boolean [default: false]
+  deleted_at timestamp
+}
+Ref: check_in_out.book_id > book.id [delete: cascade, update: cascade]
+Ref: check_in_out.borrower_id > user.id [delete: cascade, update: cascade]
+
+Table notification {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid
+  title varchar(255) [not null]
+  description text [not null]
+  is_read boolean [default:false]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+  is_deleted boolean [default: false]
+  deleted_at timestamp
+}
+Ref: notification.user_id > user.id [delete: cascade, update: cascade]
+
+Table faq {
+  id uuid [pk, default: `gen_random_uuid()`]
+  author_id uuid [not null]
+  question text [not null]
+  answer text [not null]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+  is_deleted boolean [default: false]
+  deleted_at timestamp
+}
+Ref: faq.author_id > user.id [update: cascade]
+
+Table app_log {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid [not null]
+  details jsonb [not null]
+  description text
+  requires_action boolean [default: false]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+  is_deleted boolean [default: false]
+  deleted_at timestamp
+}
+Ref: app_log.user_id > user.id [update: cascade]
