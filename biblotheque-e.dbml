@@ -3,6 +3,12 @@ Project "Biblotheque-E" {
   Note: 'Biblotheque-E Database'
 }
 
+Enum enum_suspension_status {
+  admin_action
+  password_attempt
+  terms_of_service_violation
+}
+
 Table user {
   id uuid [pk, default: `gen_random_uuid()`]
   first_name varchar(255) [not null]
