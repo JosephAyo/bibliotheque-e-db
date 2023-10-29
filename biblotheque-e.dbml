@@ -8,10 +8,8 @@ Table user {
   first_name varchar(255) [not null]
   last_name varchar(255) [not null]
   email varchar(255) [unique, not null]
-  phone varchar(255) [unique, not null]
   password text
   is_email_verified boolean [default:false]
-  is_phone_verified boolean [default:false]
   is_verified boolean [default:false]
   country text
   suspension_status enum_suspension_status [default: null]
