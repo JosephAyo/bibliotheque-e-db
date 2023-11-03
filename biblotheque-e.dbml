@@ -1,6 +1,6 @@
-Project "Biblotheque-E" {
+Project "Bibliotheque-E" {
   database_type: 'SQLLite'
-  Note: 'Biblotheque-E Database'
+  Note: 'Bibliotheque-E Database'
 }
 
 Enum enum_suspension_status {
