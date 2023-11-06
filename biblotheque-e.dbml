@@ -36,7 +36,7 @@ Table user {
   deactivated_at timestamp
 }
 
-// NOTE: roles are borrower, lender, librarian
+// NOTE: roles are borrower, proprietor, librarian
 Table role {
   id uuid [pk, default: `gen_random_uuid()`]
   name varchar(255) [unique, not null]
