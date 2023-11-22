@@ -106,6 +106,7 @@ Table book {
   title varchar(255) [not null]
   author_name varchar(255) [not null]
   description text
+  image_url text
   total_quantity int [not null, default: 0]
   public_shelf_quantity int [not null, default: 0]
   private_shelf_quantity int [not null, default: 0]
