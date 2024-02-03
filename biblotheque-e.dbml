@@ -168,6 +168,7 @@ Table notification {
   is_deleted boolean [default: false]
   deleted_at timestamp
 }
+
 Ref: notification.user_id > user.id [delete: cascade, update: cascade]
 
 Table faq {
