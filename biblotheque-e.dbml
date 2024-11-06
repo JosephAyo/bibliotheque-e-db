@@ -139,6 +139,28 @@ Table book_genre_association {
 }
 Ref: book_genre_association.book_id > book.id [delete: cascade, update: cascade]
 
+Table curation {
+  id uuid [pk, default: `gen_random_uuid()`]
+  title varchar(255) [unique, not null]
+  description text
+  published boolean [default: true]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+  is_deleted boolean [default: false]
+  deleted_at timestamp
+}
+
+Table book_curation_association {
+  id uuid [pk, default: `gen_random_uuid()`]
+  book_id uuid [not null]
+  curation_id uuid [not null]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+  is_deleted boolean [default: false]
+  deleted_at timestamp
+}
+Ref: book_curation_association.book_id > book.id [delete: cascade, update: cascade]
+
 Table check_in_out {
   id uuid [pk, default: `gen_random_uuid()`]
   book_id uuid [not null]
